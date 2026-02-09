@@ -1,0 +1,775 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FOX-AI</title>
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            overscroll-behavior-y: contain;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- ENHANCED MARKDOWN STYLING --- */
+        .prose-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        .prose-content h1 { 
+            font-size: 1.8rem; 
+            color: #fff; 
+            font-weight: 900; 
+            margin: 1.5rem 0 0.75rem 0; 
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .prose-content h2 { 
+            font-size: 1.5rem; 
+            color: #fff; 
+            font-weight: 800; 
+            margin: 1.25rem 0 0.5rem 0; 
+            line-height: 1.3;
+        }
+        
+        .prose-content h3 { 
+            font-size: 1.25rem; 
+            color: #fff; 
+            font-weight: 700; 
+            margin: 1rem 0 0.5rem 0; 
+            line-height: 1.4;
+        }
+        
+        .prose-content h4 { 
+            font-size: 1.1rem; 
+            color: #fff; 
+            font-weight: 700; 
+            margin: 0.75rem 0 0.5rem 0; 
+            line-height: 1.4;
+        }
+        
+        .prose-content p { 
+            margin-bottom: 1rem; 
+            line-height: 1.7; 
+            color: #d1d5db;
+            font-size: 1rem;
+        }
+        
+        .prose-content strong, .prose-content b { 
+            font-weight: 700; 
+            color: #fff;
+        }
+        
+        .prose-content em, .prose-content i { 
+            font-style: italic; 
+            color: #e5e7eb;
+        }
+        
+        .prose-content strong em, .prose-content em strong,
+        .prose-content b i, .prose-content i b {
+            font-weight: 700;
+            font-style: italic;
+            color: #fff;
+        }
+        
+        .prose-content del, .prose-content s { 
+            text-decoration: line-through; 
+            color: #9ca3af;
+        }
+        
+        .prose-content a { 
+            color: #f97316; 
+            text-decoration: none;
+            border-bottom: 1px solid #f97316;
+            padding-bottom: 1px;
+            transition: all 0.2s ease;
+        }
+        
+        .prose-content a:hover { 
+            color: #fdba74; 
+            border-bottom-color: #fdba74;
+        }
+        
+        /* --- ENHANCED MOBILE-FRIENDLY TABLES --- */
+        .table-container {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .prose-content table {
+            width: 100%;
+            min-width: 400px;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+            text-align: left;
+            /* Prevent table from inheriting chat bubble styles */
+            background: transparent !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .prose-content th {
+            background: linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+            color: #fff;
+            padding: 12px 14px;
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .prose-content td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #9ca3af;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+        
+        .prose-content tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .prose-content tr:hover td {
+            background-color: rgba(255,255,255,0.02);
+        }
+        
+        /* Ensure tables don't get chat bubble styling */
+        .message-bubble .prose-content table,
+        .message-bubble .prose-content .table-container,
+        .message-bubble .prose-content table * {
+            all: revert !important;
+            max-width: 100% !important;
+            background: transparent !important;
+        }
+        
+        /* Responsive table adjustments */
+        @media (max-width: 640px) {
+            .prose-content table {
+                min-width: 300px;
+                font-size: 0.85rem;
+            }
+            
+            .prose-content th,
+            .prose-content td {
+                padding: 8px 10px;
+            }
+            
+            .prose-content th {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* --- CODE BLOCKS --- */
+        .code-block-container { 
+            margin: 1.5rem 0; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            background: #080808; 
+            border: 1px solid rgba(255,255,255,0.08); 
+        }
+        
+        .code-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 8px 16px; 
+            background: #111111; 
+            border-bottom: 1px solid rgba(255,255,255,0.08); 
+        }
+        
+        .code-lang { 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            font-weight: 700; 
+            color: #6b7280; 
+        }
+        
+        .copy-btn { 
+            color: #9ca3af; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            font-size: 11px; 
+        }
+        
+        pre[class*="language-"] { 
+            margin: 0 !important; 
+            padding: 1.25rem !important; 
+            background: #080808 !important; 
+            overflow-x: auto;
+        }
+        
+        code[class*="language-"] { 
+            font-family: 'Fira Code', monospace !important; 
+            font-size: 0.85rem !important; 
+            line-height: 1.6 !important; 
+            color: #e5e7eb !important; 
+        }
+
+        .brush-glow { filter: blur(120px); }
+        .message-bubble { 
+            max-width: calc(100vw - 85px); 
+            width: fit-content;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        @media (min-width: 768px) { 
+            .message-bubble { 
+                max-width: 85%; 
+            } 
+        }
+
+        #intro-screen { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100%; 
+            text-align: center; 
+        }
+        
+        .intro-title { 
+            font-size: clamp(3rem, 10vw, 6rem); 
+            font-weight: 900; 
+            letter-spacing: -0.05em; 
+            background: linear-gradient(to bottom, #fff, #444); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            line-height: 1; 
+        }
+        
+        .intro-subtitle { 
+            font-size: clamp(1rem, 4vw, 1.5rem); 
+            font-weight: 700; 
+            letter-spacing: 0.4em; 
+            color: #f97316; 
+            margin-top: 0.5rem; 
+            text-transform: uppercase; 
+        }
+
+        .thinking-stat { 
+            font-size: 10px; 
+            color: #4b5563; 
+            margin-bottom: 8px; 
+            margin-left: 12px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        
+        .typing-cursor::after { 
+            content: '|'; 
+            animation: cursor-blink 0.8s infinite; 
+            color: #f97316; 
+            margin-left: 2px; 
+            font-weight: bold; 
+        }
+        
+        @keyframes cursor-blink { 
+            0%, 100% { opacity: 0; } 
+            50% { opacity: 1; } 
+        }
+        
+        /* Typing effect classes */
+        .typing-text {
+            display: inline-block;
+        }
+        
+        .typing-effect {
+            overflow: hidden;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #sidebar { 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 50; 
+        }
+        
+        .sidebar-closed { transform: translateX(-100%); }
+        .sidebar-open { transform: translateX(0); }
+
+        #send-btn:disabled { background: #1a1a1a; color: #444; opacity: 0.6; }
+        #send-btn:not(:disabled) { background: linear-gradient(to right, #ea580c, #dc2626); color: white; }
+
+        #attachment-menu {
+            transform: translateY(10px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #attachment-menu.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #image-preview-container {
+            display: none;
+            padding: 8px;
+            background: #0d0d0d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-bottom: none;
+            border-radius: 1.5rem 1.5rem 0 0;
+            width: fit-content;
+            margin-left: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Blockquote styling */
+        .prose-content blockquote {
+            border-left: 4px solid #f97316;
+            margin: 1.5rem 0;
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            color: #9ca3af;
+            font-style: italic;
+            background: rgba(249, 115, 22, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* List styling */
+        .prose-content ul, .prose-content ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: #d1d5db;
+        }
+        
+        .prose-content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        
+        .prose-content ul li::marker {
+            color: #f97316;
+        }
+        
+        .prose-content ol li::marker {
+            color: #f97316;
+            font-weight: bold;
+        }
+        
+        /* Horizontal rule */
+        .prose-content hr {
+            border: none;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 2rem 0;
+        }
+        
+        /* Inline code */
+        .prose-content code:not([class*="language-"]) {
+            background: rgba(255,255,255,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            color: #f97316;
+        }
+        
+        /* Image styling */
+        .prose-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-200 overflow-hidden bg-black">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="photo-input" accept="image/*" class="hidden">
+    <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden">
+    <input type="file" id="folder-input" webkitdirectory directory class="hidden">
+
+    <!-- Sidebar Dashboard -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-[#080808] border-r border-white/10 sidebar-closed flex flex-col">
+        <div class="p-6 border-b border-white/5 flex items-center justify-between">
+            <h2 class="font-black text-xl tracking-tighter text-white">HISTORY</h2>
+            <button id="close-sidebar" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="p-4">
+            <button id="new-chat-btn" class="w-full flex items-center gap-3 px-4 py-3 bg-white/5 hover:bg-orange-600/20 border border-white/10 rounded-xl transition-all group">
+                <i data-lucide="plus" class="w-4 h-4 text-orange-500"></i>
+                <span class="text-sm font-bold text-gray-200 group-hover:text-white">NEW CHAT</span>
+            </button>
+            <div class="relative mt-4">
+                <input id="search-history" type="text" placeholder="Search chats..." class="w-full bg-black border border-white/10 rounded-lg py-2 px-9 text-xs focus:outline-none focus:border-orange-500/50" />
+                <i data-lucide="search" class="absolute left-3 top-2.5 w-3.5 h-3.5 text-gray-500"></i>
+            </div>
+        </div>
+        <div id="history-list" class="flex-1 overflow-y-auto px-4 space-y-2 custom-scrollbar pb-10"></div>
+    </aside>
+
+    <div class="flex flex-col h-screen relative overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-orange-900/10 brush-glow rounded-full pointer-events-none animate-pulse"></div>
+        
+        <header class="relative z-10 flex items-center justify-between px-6 py-5 bg-black/40 backdrop-blur-md border-b border-white/10">
+            <div class="flex items-center gap-4">
+                <button id="menu-btn" class="p-2 -ml-2 text-gray-400 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-orange-600 to-red-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000"></div>
+                    <div class="relative bg-black p-2.5 rounded-xl border border-white/10 flex items-center justify-center">
+                        <i data-lucide="cpu" class="text-orange-500 w-6 h-6"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-black text-2xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-500">FOX-AI</h1>
+                </div>
+            </div>
+            <button id="reset-btn" class="hidden flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-red-950/30 border border-white/10 rounded-full transition-all text-gray-400 hover:text-red-400">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span class="text-xs font-semibold uppercase tracking-wider">Flush</span>
+            </button>
+        </header>
+
+        <main id="chat-container" class="relative z-10 flex-1 overflow-y-auto p-4 md:px-24 md:py-10 space-y-8 custom-scrollbar">
+            <div id="intro-screen">
+                <h1 class="intro-title">FOX-AI</h1>
+                <p class="intro-subtitle">TRY IT NOW</p>
+            </div>
+        </main>
+
+        <footer id="footer-area" class="relative z-20 p-6 transition-all duration-700" style="transform: translateY(-92px);">
+            <div class="max-w-5xl mx-auto relative">
+                
+                <div id="image-preview-container" class="flex items-center gap-3">
+                    <div class="relative group">
+                        <img id="image-preview" src="" class="h-16 w-16 object-cover rounded-lg border border-white/20">
+                        <button id="remove-image" class="absolute -top-2 -right-2 bg-red-600 text-white p-1 rounded-full shadow-lg">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="attachment-menu" class="absolute left-0 bottom-28 w-48 bg-[#0d0d0d] border border-white/10 rounded-2xl shadow-2xl p-2 z-30">
+                    <button id="photo-opt" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white">
+                        <i data-lucide="image" class="w-4 h-4 text-orange-500"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Photos</span>
+                    </button>
+                    <button id="folder-opt" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white">
+                        <i data-lucide="folder" class="w-4 h-4 text-orange-500"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Folders</span>
+                    </button>
+                    <button id="camera-opt" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white">
+                        <i data-lucide="camera" class="w-4 h-4 text-orange-500"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Camera</span>
+                    </button>
+                </div>
+
+                <!-- UPDATED ENHANCED SENDBOX -->
+                <form id="chat-form" class="relative group flex items-center gap-3">
+                    <div class="relative flex-1 flex items-center">
+                        <!-- Square/Circle button approx 50x50 -->
+                        <button type="button" id="plus-btn" class="absolute left-3 w-[50px] h-[50px] bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-orange-500 z-20 transition-all">
+                            <i data-lucide="plus" class="w-6 h-6"></i>
+                        </button>
+                        <!-- Input with 64px height -->
+                        <input id="user-input" type="text" autocomplete="off" placeholder="How can I help you today?" class="relative w-full bg-[#0d0d0d] border border-white/10 text-white rounded-[2.5rem] h-[64px] pl-20 pr-24 focus:outline-none focus:border-orange-500/50 transition-all shadow-2xl text-base" />
+                        <!-- Send button with 48px height -->
+                        <button type="submit" id="send-btn" disabled class="absolute right-3 top-2 bottom-2 px-8 rounded-[2rem] flex items-center justify-center active:scale-95 transition-all">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="info-badges" class="flex justify-center gap-6 mt-6">
+                    <div class="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest"><i data-lucide="shield" class="text-orange-500 w-3 h-3"></i> AES-256</div>
+                    <div class="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest"><i data-lucide="zap" class="text-orange-500 w-3 h-3"></i> Gemini API</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const API_ENDPOINT = "https://api.nexray.web.id/ai/gemini";
+        const SYSTEM_PROMPT = "Nama kamu adalah FOX-AI. Kamu adalah asisten AI yang ceria dan santun. Jawab selalu dalam Bahasa Indonesia.";
+
+        const chatForm = document.getElementById('chat-form'), userInput = document.getElementById('user-input'), chatContainer = document.getElementById('chat-container'), introScreen = document.getElementById('intro-screen'), footerArea = document.getElementById('footer-area'), infoBadges = document.getElementById('info-badges'), resetBtn = document.getElementById('reset-btn'), sendBtn = document.getElementById('send-btn'), menuBtn = document.getElementById('menu-btn'), sidebar = document.getElementById('sidebar'), sidebarOverlay = document.getElementById('sidebar-overlay'), closeSidebar = document.getElementById('close-sidebar'), newChatBtn = document.getElementById('new-chat-btn'), historyList = document.getElementById('history-list'), searchInput = document.getElementById('search-history'), plusBtn = document.getElementById('plus-btn'), attachmentMenu = document.getElementById('attachment-menu'), photoInput = document.getElementById('photo-input'), cameraInput = document.getElementById('camera-input'), folderInput = document.getElementById('folder-input'), imagePreviewContainer = document.getElementById('image-preview-container'), imagePreview = document.getElementById('image-preview'), removeImageBtn = document.getElementById('remove-image');
+
+        let currentChatId = Date.now().toString(), chats = JSON.parse(localStorage.getItem('fox_ai_chats')) || {}, messages = [{ role: 'system', content: SYSTEM_PROMPT }], hasStarted = false, isLoading = false, attachedImageBase64 = null;
+
+        // Typing effect function
+        function typeWriter(element, text, speed = 30, onComplete = null) {
+            element.innerHTML = '';
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                if (i < text.length) {
+                    // Check if we're at a code block or table
+                    if (text.substring(i, i + 3) === '```' || text.substring(i, i + 2) === '||') {
+                        // Skip typing effect for code blocks and tables
+                        element.innerHTML = text;
+                        clearInterval(typeInterval);
+                        if (onComplete) onComplete();
+                        return;
+                    }
+                    
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    // Auto-scroll during typing
+                    scrollToBottom();
+                } else {
+                    clearInterval(typeInterval);
+                    if (onComplete) onComplete();
+                }
+            }, speed);
+        }
+
+        plusBtn.addEventListener('click', (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); });
+        document.getElementById('photo-opt').onclick = () => photoInput.click();
+        document.getElementById('camera-opt').onclick = () => cameraInput.click();
+        document.getElementById('folder-opt').onclick = () => folderInput.click();
+
+        function setupInputHandler(input, autoSend = false) {
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        attachedImageBase64 = event.target.result;
+                        imagePreview.src = attachedImageBase64;
+                        imagePreviewContainer.style.display = 'flex';
+                        validateSendState();
+                        attachmentMenu.classList.remove('active');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+        setupInputHandler(photoInput, false);
+        setupInputHandler(cameraInput, true);
+
+        removeImageBtn.onclick = () => {
+            attachedImageBase64 = null;
+            imagePreviewContainer.style.display = 'none';
+            validateSendState();
+        };
+
+        function validateSendState() {
+            const hasText = userInput.value.trim().length > 0;
+            const hasImage = !!attachedImageBase64;
+            sendBtn.disabled = (!hasText && !hasImage) || isLoading;
+        }
+        userInput.addEventListener('input', validateSendState);
+        document.addEventListener('click', () => attachmentMenu.classList.remove('active'));
+
+        // Configure marked.js for better markdown support
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            pedantic: false,
+            sanitize: false,
+            smartLists: true,
+            smartypants: true,
+            xhtml: false
+        });
+
+        function scrollToBottom() { chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' }); }
+
+        function toggleSidebar() {
+            if (sidebar.classList.contains('sidebar-open')) {
+                sidebar.classList.replace('sidebar-open', 'sidebar-closed');
+                sidebarOverlay.classList.add('hidden');
+                sidebarOverlay.classList.remove('opacity-100');
+            } else {
+                sidebar.classList.replace('sidebar-closed', 'sidebar-open');
+                sidebarOverlay.classList.remove('hidden');
+                setTimeout(() => sidebarOverlay.classList.add('opacity-100'), 10);
+                renderHistory();
+            }
+        }
+
+        function createMessageElement(role, content, duration = null, showTypingCursor = false) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex flex-col ${role === 'user' ? 'items-end' : 'items-start'} fade-in mb-8 w-full`;
+            const timeStat = duration ? `<div class="thinking-stat">Thinking: ${duration}s</div>` : '';
+            
+            // Process content with marked
+            let processedContent = content;
+            try {
+                processedContent = marked.parse(content);
+            } catch (e) {
+                console.error("Markdown parsing error:", e);
+                processedContent = content; // Fallback to raw content
+            }
+            
+            wrapper.innerHTML = `${timeStat}<div class="flex gap-4 ${role === 'user' ? 'flex-row-reverse' : ''} max-w-full"><div class="flex-shrink-0 w-11 h-11 rounded-2xl flex items-center justify-center border ${role === 'user' ? 'bg-gray-900 border-white/20' : 'bg-orange-600 border-orange-400'}"><i data-lucide="${role === 'user' ? 'user' : 'bot'}" class="text-white w-5 h-5"></i></div><div class="message-bubble p-5 rounded-[1.8rem] border bg-[#0a0a0a] border-white/10 text-white"><div class="prose-content text-sm md:text-[0.95rem] font-light typing-effect ${showTypingCursor ? 'typing-cursor' : ''}">${processedContent}</div></div></div>`;
+            return wrapper;
+        }
+
+        async function handleSend(e) {
+            if (e) e.preventDefault();
+            const text = userInput.value.trim(), image = attachedImageBase64;
+            if ((!text && !image) || isLoading) return;
+
+            if (!hasStarted) {
+                hasStarted = true; introScreen.style.display = 'none';
+                footerArea.style.transform = 'translateY(-30px)';
+                infoBadges.classList.add('opacity-0', 'h-0', 'overflow-hidden'); resetBtn.classList.remove('hidden');
+            }
+
+            messages.push({ role: 'user', content: text });
+            chatContainer.appendChild(createMessageElement('user', image ? `<img src="${image}" class="max-w-[200px] rounded-lg mb-2"><br>${text}` : text));
+            userInput.value = ''; attachedImageBase64 = null; imagePreviewContainer.style.display = 'none';
+            validateSendState(); scrollToBottom(); lucide.createIcons();
+
+            isLoading = true; let seconds = 0;
+            const thinkingEl = createMessageElement('assistant', "Thinking...");
+            thinkingEl.id = 'thinking-bubble'; chatContainer.appendChild(thinkingEl);
+            const timer = setInterval(() => { seconds++; thinkingEl.querySelector('.prose-content').innerText = `Thinking... (${seconds}s)`; }, 1000);
+
+            try {
+                // Encode the user message for the URL
+                const encodedText = encodeURIComponent(text);
+                const response = await fetch(`${API_ENDPOINT}?text=${encodedText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+                
+                const data = await response.json();
+                clearInterval(timer); document.getElementById('thinking-bubble')?.remove();
+                
+                if (data && data.state === true && data.result) {
+                    // Extract only the answer from the result
+                    const answer = data.result.trim();
+                    messages.push({ role: 'assistant', content: answer });
+                    
+                    // Create message element with typing cursor
+                    const messageElement = createMessageElement('assistant', '', seconds, true);
+                    chatContainer.appendChild(messageElement);
+                    
+                    // Get the content div
+                    const contentDiv = messageElement.querySelector('.prose-content');
+                    
+                    // Apply typing effect
+                    typeWriter(contentDiv, answer, 20, () => {
+                        // Remove typing cursor after typing is complete
+                        contentDiv.classList.remove('typing-cursor');
+                        
+                        // Re-parse with marked for proper markdown rendering
+                        contentDiv.innerHTML = marked.parse(answer);
+                        
+                        // Apply syntax highlighting
+                        Prism.highlightAll();
+                        
+                        // Initialize copy buttons for code blocks
+                        setTimeout(() => {
+                            document.querySelectorAll('.code-block-container').forEach(block => {
+                                const copyBtn = block.querySelector('.copy-btn');
+                                const code = block.querySelector('code')?.textContent || '';
+                                copyBtn?.addEventListener('click', () => {
+                                    navigator.clipboard.writeText(code);
+                                    const originalText = copyBtn.textContent;
+                                    copyBtn.textContent = 'Copied!';
+                                    copyBtn.style.color = '#10b981';
+                                    setTimeout(() => {
+                                        copyBtn.textContent = originalText;
+                                        copyBtn.style.color = '#9ca3af';
+                                        lucide.createIcons();
+                                    }, 2000);
+                                });
+                            });
+                        }, 100);
+                    });
+                    
+                } else if (data && data.result) {
+                    // If the structure is different but has result field
+                    const answer = data.result.trim();
+                    messages.push({ role: 'assistant', content: answer });
+                    
+                    // Create message element with typing cursor
+                    const messageElement = createMessageElement('assistant', '', seconds, true);
+                    chatContainer.appendChild(messageElement);
+                    
+                    // Get the content div
+                    const contentDiv = messageElement.querySelector('.prose-content');
+                    
+                    // Apply typing effect
+                    typeWriter(contentDiv, answer, 20, () => {
+                        // Remove typing cursor after typing is complete
+                        contentDiv.classList.remove('typing-cursor');
+                        
+                        // Re-parse with marked for proper markdown rendering
+                        contentDiv.innerHTML = marked.parse(answer);
+                        
+                        // Apply syntax highlighting
+                        Prism.highlightAll();
+                    });
+                } else {
+                    throw new Error("Invalid response format from API");
+                }
+            } catch (err) { 
+                clearInterval(timer); document.getElementById('thinking-bubble')?.remove();
+                chatContainer.appendChild(createMessageElement('assistant', `Gagal terhubung ke AI: ${err.message}`));
+                console.error("API Error:", err);
+            } finally { isLoading = false; validateSendState(); scrollToBottom(); lucide.createIcons(); }
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            Object.values(chats).forEach(chat => {
+                const div = document.createElement('div');
+                div.className = "p-3 rounded-lg cursor-pointer bg-white/5 border border-transparent hover:border-white/10";
+                div.innerHTML = `<div class="text-xs font-bold text-white truncate">${chat.title}</div>`;
+                div.onclick = () => { /* Load logic */ };
+                historyList.appendChild(div);
+            });
+        }
+
+        menuBtn.onclick = toggleSidebar; closeSidebar.onclick = toggleSidebar; sidebarOverlay.onclick = toggleSidebar;
+        newChatBtn.onclick = () => location.reload();
+        chatForm.onsubmit = handleSend;
+        window.onload = () => lucide.createIcons();
+    </script>
+</body>
+</html>
